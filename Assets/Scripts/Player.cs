@@ -1,5 +1,4 @@
 ﻿using System;
-using Data.Util;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,20 +7,40 @@ public class Player : MonoBehaviour
     
     private Rigidbody2D _rigidbody;
     private Animator _animator;
-    private CapsuleCollider2D _collider;
 
+    private float _currentPosition;
+    private float _previousPosition;
     private bool _allowMove;
     private bool _isFloating;
     private bool _isOnStairs;
 
     private static readonly int IsRunning = Animator.StringToHash("isRunning");
     private static readonly int Attack = Animator.StringToHash("attack");
+    private static readonly int Fall = Animator.StringToHash("fall");
+    private static readonly int JumpAnimation = Animator.StringToHash("jump");
 
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _collider = GetComponent<CapsuleCollider2D>();
+    }
+    
+    private void FixedUpdate()
+    {
+        ListenFalling();
+    }
+    
+    private void ListenFalling()
+    {
+        if (_isOnStairs || !_isFloating) return;
+
+        _currentPosition = _rigidbody.position.y;
+        _animator.SetBool(Fall, _currentPosition < _previousPosition);
+    }
+    
+    private void LateUpdate()
+    {
+        _previousPosition = _currentPosition;
     }
 
     private void Update()
@@ -73,17 +92,21 @@ public class Player : MonoBehaviour
 
     private void StairsMoveFix(float direction)
     {
-        // Ajuste pro personagem não escorregar na escada
+        // Fix for character not slide in stairs
         _allowMove = !_isOnStairs || direction != 0;
         _rigidbody.constraints = _allowMove ? RigidbodyConstraints2D.FreezeRotation : RigidbodyConstraints2D.FreezeAll;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        _animator.SetBool(JumpAnimation, false);
+        _animator.SetBool(Fall, false);
+        
         if (collision.gameObject.layer == LayerMask.NameToLayer("Stairs"))
         {
             _isOnStairs = true;
         }
+        
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             _isFloating = false;
@@ -96,9 +119,11 @@ public class Player : MonoBehaviour
         {
             _isOnStairs = false;
         }
+        
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             _isFloating = true;
+            _animator.SetBool(JumpAnimation, true);
         }
     }
 }
