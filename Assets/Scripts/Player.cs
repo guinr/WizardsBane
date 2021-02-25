@@ -4,6 +4,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float speed;
+    public bool isAttacking;
     
     private Rigidbody2D _rigidbody;
     private Animator _animator;
@@ -77,6 +78,8 @@ public class Player : MonoBehaviour
 
     private void ListenMovementInput()
     {
+        if (isAttacking && !_isFloating) return;
+        
         var direction = Input.GetAxis("Horizontal");
 
         StairsMoveFix(direction);

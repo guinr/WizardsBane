@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3945038715146283613}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 7
+  isAttacking: 0
 --- !u!50 &7414733151138078773
 Rigidbody2D:
   serializedVersion: 4
@@ -165,7 +166,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 210355997442038460}
-  - component: {fileID: 3233386543791071792}
+  - component: {fileID: 5116649008723491852}
   m_Layer: 0
   m_Name: Attack_3_hitbox
   m_TagString: Attack
@@ -187,8 +188,8 @@ Transform:
   m_Father: {fileID: 4774673433530761923}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 56.728004}
---- !u!70 &3233386543791071792
-CapsuleCollider2D:
+--- !u!61 &5116649008723491852
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -200,6 +201,16 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.08}
-  m_Size: {x: 1.07, y: 1.29}
-  m_Direction: 0
+  m_Offset: {x: 0.13986018, y: -0.063497186}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.78468996, y: 1.269727}
+  m_EdgeRadius: 0
