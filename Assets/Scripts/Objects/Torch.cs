@@ -10,11 +10,12 @@ namespace Objects
         private void Start()
         {
             InvokeRepeating(nameof(ChangeIntensity), 0.2f, 0.3f);
-        
         }
 
         private void ChangeIntensity()
         {
+            if (!lightSource.isActiveAndEnabled) return;
+            
             lightSource.pointLightOuterRadius = lightSource.pointLightOuterRadius > 2f ? 2f : 2.2f;
         }
     }
