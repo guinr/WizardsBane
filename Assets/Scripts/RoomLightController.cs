@@ -21,7 +21,7 @@ public class RoomLightController : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D cldr)
     {
-        if (_toggledOn) return;
+        if (_toggledOn || !cldr.gameObject.CompareTag("Player")) return;
         
         StartCoroutine(ChangeIntensity(true));
     }
