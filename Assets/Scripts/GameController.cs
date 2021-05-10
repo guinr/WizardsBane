@@ -9,7 +9,7 @@ public class GameController : MonoBehaviour
     public GameObject rooms;
     public GameObject player;
 
-    private const string Seed = "d";
+    public string seed;
     private const int Height = 5;
     private const int Width = 5;
     private string[,] _rooms;
@@ -18,7 +18,7 @@ public class GameController : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
-        var md5 = MD5Util.Md5Sum(Seed);
+        var md5 = MD5Util.Md5Sum(seed);
 
         var chars = md5.ToCharArray();
 
@@ -30,6 +30,9 @@ public class GameController : MonoBehaviour
         GenerateSubBossesRooms();
         GenerateRandomRooms(chars);
 
+        var lastHeight = 0f;
+        var lastWidth = 0f;
+
         for (var i = 0; i < Height; i++)
         {
             for (var j = 0; j < Width; j++)
@@ -39,11 +42,22 @@ public class GameController : MonoBehaviour
                 var newRoom = Instantiate(room);
                 
                 newRoom.gameObject.SetActive(true);
-                newRoom.transform.position = new Vector3(-18 * j, -14 * i, 0);
+                var box = newRoom.gameObject.transform.GetChild(0).GetComponent<BoxCollider2D>();
+                var boxSize = box.size;
+                
+                newRoom.transform.position = new Vector3(lastHeight, lastWidth, 0);
+
+                lastHeight += boxSize.x;
+
+                if (j == Width -1)
+                {
+                    lastHeight = 0f;
+                    lastWidth -= boxSize.y;                    
+                }
 
                 if (_rooms[i, j] != "king_room") continue;
                 
-                player.transform.position = new Vector3(-18 * j + (normalRooms ? -9 : -18), -14 * i, 0);
+                player.transform.position = new Vector3(boxSize.x * j + (normalRooms ? -boxSize.y * 1.3f : boxSize.y/3), -14 * i, 0);
                 player.SetActive(true);
             }
         }
