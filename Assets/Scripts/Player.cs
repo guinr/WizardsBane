@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
     {
         if (!_isFloating)
         {
-            _rigidbody.AddForce(new Vector2(0f, _rigidbody.mass + _rigidbody.gravityScale * 130f), ForceMode2D.Impulse);
+            _rigidbody.AddForce(new Vector2(0f, (_rigidbody.mass + _rigidbody.gravityScale) * 20f), ForceMode2D.Impulse);
         }
     }
 
