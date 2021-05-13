@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using UnityEngine;
 using Utils;
 using Random = UnityEngine.Random;
@@ -8,7 +9,6 @@ public class GameController : MonoBehaviour
 
     public GameObject rooms;
     public GameObject player;
-    public string seed;
     private const int LevelCols = 4;
     private const int LevelRows = 4;
 
@@ -42,6 +42,7 @@ public class GameController : MonoBehaviour
 
     private void GenerateRandomRooms()
     {
+        var seed = DateTime.Now.ToString(CultureInfo.CurrentCulture);
         var md5 = MD5Util.Md5Sum(seed);
         var chars = md5.ToCharArray();
         var md5Index = 0;
