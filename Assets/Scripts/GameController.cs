@@ -2,7 +2,6 @@
 using System.Globalization;
 using UnityEngine;
 using Utils;
-using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
