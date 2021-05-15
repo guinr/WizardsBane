@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b679db7a8cee82a46ba6a4f391189e9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
   speed: 7
   isAttacking: 0
 --- !u!50 &7414733151138078773
@@ -140,7 +141,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: fe7b744bf1f02174bbd1f2ec33b33f61, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!70 &3945038715146283613
 CapsuleCollider2D:
