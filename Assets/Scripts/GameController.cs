@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using UnityEngine;
 using Utils;
@@ -8,18 +9,23 @@ public class GameController : MonoBehaviour
 
     public GameObject rooms;
     public GameObject player;
+    
     private const int LevelCols = 4;
     private const int LevelRows = 4;
+    private Hashtable _generatedRooms;
+    private Vector2 _actualRoom;
 
     private void Start()
     {
         Application.targetFrameRate = 60;
 
         InitCastle();
+        TeleportPlayerToStart();
     }
 
     private void InitCastle()
     {
+        _generatedRooms = new Hashtable();
         GenerateKingRoom();
         GenerateCornerRoom(LevelCols, 0);
         GenerateCornerRoom(0, LevelRows, true);
@@ -29,14 +35,14 @@ public class GameController : MonoBehaviour
 
     private void GenerateKingRoom()
     {
-        GenerateRoom("king_room", 0, 0);
-        player.transform.position = new Vector3(10, -8.5f, 0);
-        player.SetActive(true);
+        var kingRoom = GenerateRoom("king_room", 0, 0);
+        _generatedRooms.Add(new Vector2(0, 0), kingRoom);
     }
 
     private void GenerateBossRoom()
     {
-        GenerateRoom("boss_room", LevelCols, LevelRows);
+        var bossRoom = GenerateRoom("boss_room", LevelCols, LevelRows);
+        _generatedRooms.Add(new Vector2(LevelCols, LevelRows), bossRoom);
     }
 
     private void GenerateRandomRooms()
@@ -63,7 +69,9 @@ public class GameController : MonoBehaviour
                 }
                 else
                 {
-                    GenerateRoom("room_" + chars[md5Index], actualCol, actualLevel);
+                    var flip = actualLevel % 2 != 0;
+                    var room = GenerateRoom("room_" + chars[md5Index], actualCol, actualLevel, flip);
+                    _generatedRooms.Add(new Vector2(actualCol, actualLevel), room);
 
                     if (md5Index == chars.Length)
                     {
@@ -80,17 +88,17 @@ public class GameController : MonoBehaviour
 
     private void GenerateCornerRoom(int col, int row, bool flip = false)
     {
-        GenerateRoom("corner_room", col, row, flip);
+        var cornerRoom = GenerateRoom("corner_room", col, row, flip);
+        _generatedRooms.Add(new Vector2(col, row), cornerRoom);
     }
 
     private void GenerateMiniBossRoom(int col, int row)
     {
-        var miniBossRoomName = "mini_boss_room_" + row;
-        
-        GenerateRoom(miniBossRoomName, col, row);
+        var miniBossRoom = GenerateRoom("mini_boss_room_" + row, col, row);
+        _generatedRooms.Add(new Vector2(col, row), miniBossRoom);
     }
 
-    private void GenerateRoom(string roomName, int cols, int row, bool flip = false)
+    private GameObject GenerateRoom(string roomName, int cols, int row, bool flip = false)
     {
         var room = rooms.transform.Find(roomName);
         var newRoom = Instantiate(room);
@@ -102,5 +110,60 @@ public class GameController : MonoBehaviour
         {
             newRoom.transform.eulerAngles = new Vector3(0f, 180f, 0f);
         }
+
+        return newRoom.gameObject;
+    }
+
+    private void TeleportPlayerToStart()
+    {
+        var startPosition = GetRoomStartPosition(new Vector2(0, 0));
+        TeleportPlayer(startPosition.x, startPosition.y);
+    }
+
+    private Vector3 GetRoomStartPosition(Vector2 roomPosition)
+    {
+        var room = (GameObject) _generatedRooms[roomPosition];
+        return room.transform.Find("StartPosition").position;
+    }
+
+    public void GoToNextRoom()
+    {
+        var actualX = Mathf.FloorToInt(_actualRoom.x);
+        var actualY = Mathf.FloorToInt(_actualRoom.y);
+        
+        var nextRoomX = actualX;
+        var nextRoomY = actualY;
+
+        if (actualY % 2 == 0)
+        {
+            if (actualX == LevelCols)
+            {
+                nextRoomY += 1;
+            } else
+            {
+                nextRoomX += 1;
+            }
+        }
+        else
+        {
+            if (actualX == 0)
+            {
+                nextRoomY += 1;
+            }
+            else
+            {
+                nextRoomX -= 1;
+            }
+        }
+        
+        _actualRoom = new Vector2(nextRoomX, nextRoomY);
+        
+        var startPosition = GetRoomStartPosition(_actualRoom);
+        TeleportPlayer(startPosition.x, startPosition.y);
+    }
+
+    private void TeleportPlayer(float x, float y)
+    {
+        player.transform.position = new Vector3(x, y, 0);
     }
 }

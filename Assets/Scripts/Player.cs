@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public GameObject gameController;
     public float speed;
     public bool isAttacking;
     
     private Rigidbody2D _rigidbody;
     private Animator _animator;
 
+    private GameController _gameController;
     private float _currentPosition;
     private float _previousPosition;
     private bool _allowMove;
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _gameController = gameController.GetComponent<GameController>();
     }
     
     private void FixedUpdate()
@@ -127,6 +130,14 @@ public class Player : MonoBehaviour
         {
             _isFloating = true;
             _animator.SetBool(JumpAnimation, true);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D cldr)
+    {
+        if (cldr.gameObject.CompareTag("Portal"))
+        {
+            _gameController.GoToNextRoom();
         }
     }
 }
