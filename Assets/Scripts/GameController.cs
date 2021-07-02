@@ -13,7 +13,6 @@ public class GameController : MonoBehaviour
     private const int LevelCols = 4;
     private const int LevelRows = 4;
     private Hashtable _generatedRooms;
-    private Vector2 _actualRoom;
 
     private void Start()
     {
@@ -28,7 +27,6 @@ public class GameController : MonoBehaviour
         _generatedRooms = new Hashtable();
         GenerateKingRoom();
         GenerateCornerRoom(LevelCols, 0);
-        GenerateCornerRoom(0, LevelRows, true);
         GenerateBossRoom();
         GenerateRandomRooms();
     }
@@ -58,6 +56,9 @@ public class GameController : MonoBehaviour
             {
                 if (actualCol == 0 && actualLevel == 0 ||
                     actualCol == LevelCols && actualLevel == 0 ||
+                    actualCol == LevelCols && actualLevel == 1 ||
+                    actualCol == 0 && actualLevel == 2 ||
+                    actualCol == LevelCols && actualLevel == 3 ||
                     actualCol == 0 && actualLevel == LevelRows ||
                     actualCol == LevelCols && actualLevel == LevelRows) continue;
 
@@ -70,7 +71,9 @@ public class GameController : MonoBehaviour
                 else
                 {
                     var flip = actualLevel % 2 != 0;
-                    var room = GenerateRoom("room_" + chars[md5Index], actualCol, actualLevel, flip);
+                    var roomName = "room_" + chars[md5Index];
+                    //roomName = "room_0";
+                    var room = GenerateRoom(roomName, actualCol, actualLevel, flip);
                     _generatedRooms.Add(new Vector2(actualCol, actualLevel), room);
 
                     if (md5Index == chars.Length)
@@ -104,7 +107,7 @@ public class GameController : MonoBehaviour
         var newRoom = Instantiate(room);
         newRoom.gameObject.SetActive(true);
         
-        newRoom.transform.position = new Vector3(75 * cols, -75 * row, 0);
+        newRoom.transform.position = new Vector3(50 * cols, -25 * row, 0);
 
         if (flip)
         {
@@ -124,42 +127,6 @@ public class GameController : MonoBehaviour
     {
         var room = (GameObject) _generatedRooms[roomPosition];
         return room.transform.Find("StartPosition").position;
-    }
-
-    public void GoToNextRoom()
-    {
-        var actualX = Mathf.FloorToInt(_actualRoom.x);
-        var actualY = Mathf.FloorToInt(_actualRoom.y);
-        
-        var nextRoomX = actualX;
-        var nextRoomY = actualY;
-
-        if (actualY % 2 == 0)
-        {
-            if (actualX == LevelCols)
-            {
-                nextRoomY += 1;
-            } else
-            {
-                nextRoomX += 1;
-            }
-        }
-        else
-        {
-            if (actualX == 0)
-            {
-                nextRoomY += 1;
-            }
-            else
-            {
-                nextRoomX -= 1;
-            }
-        }
-        
-        _actualRoom = new Vector2(nextRoomX, nextRoomY);
-        
-        var startPosition = GetRoomStartPosition(_actualRoom);
-        TeleportPlayer(startPosition.x, startPosition.y);
     }
 
     private void TeleportPlayer(float x, float y)

@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 0}
-  speed: 7
+  speed: 9
   isAttacking: 0
 --- !u!50 &7414733151138078773
 Rigidbody2D:

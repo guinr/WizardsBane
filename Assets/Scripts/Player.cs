@@ -133,11 +133,4 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D cldr)
-    {
-        if (cldr.gameObject.CompareTag("Portal"))
-        {
-            _gameController.GoToNextRoom();
-        }
-    }
 }
