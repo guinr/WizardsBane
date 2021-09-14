@@ -3,6 +3,7 @@
 public abstract class Enemy : MonoBehaviour
 {
     public int health;
+    public int strength;
     
     private Rigidbody2D _rigidbody;
     protected Animator Animator;

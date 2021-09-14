@@ -1,16 +1,16 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public GameObject gameController;
     public float speed;
+    public float maxHealth = 100f;
+    public float health;
     public bool isAttacking;
     
     private Rigidbody2D _rigidbody;
     private Animator _animator;
+    private UserStatusController _userStatusController;
 
-    private GameController _gameController;
     private float _currentPosition;
     private float _previousPosition;
     private bool _allowMove;
@@ -26,7 +26,8 @@ public class Player : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _gameController = gameController.GetComponent<GameController>();
+        _userStatusController = FindObjectOfType<Canvas>().GetComponent<UserStatusController>();
+        health = maxHealth;
     }
     
     private void FixedUpdate()
@@ -101,6 +102,16 @@ public class Player : MonoBehaviour
         // Fix for character not slide in stairs
         _allowMove = !_isOnStairs || direction != 0;
         _rigidbody.constraints = _allowMove ? RigidbodyConstraints2D.FreezeRotation : RigidbodyConstraints2D.FreezeAll;
+    }
+
+    private void OnTriggerEnter2D(Collider2D cldr)
+    {
+        if (cldr.gameObject.CompareTag("EnemyAttack"))
+        {
+            health -= 10;
+            var healthPercentage = health / maxHealth;
+            _userStatusController.UpdateHealth(healthPercentage);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
